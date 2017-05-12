@@ -30,8 +30,7 @@ public class DrawChart extends View {
     private int XMAX = 150;//最大刻度
     int widthSize;
     int heightSize;
-
-
+    private boolean firstInto = true;
     private List<Point> plist, plist2;
 
     int y, otherY;
@@ -85,23 +84,20 @@ public class DrawChart extends View {
     @Override
     protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
+        Log.d(TAG, "onDraw");
         drawTable(canvas); //表格
         prepareLine(y); //坐标点
         prepareOtherLine(otherY); //坐标点
         drawCurve(canvas); //折线
         drawOtherCurve(canvas); //折线
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
     }
+
+
 
     private void drawTable(Canvas canvas) {
 
         Paint paint = new Paint();
-
-
         //画外框
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.parseColor("#000000"));
@@ -119,12 +115,12 @@ public class DrawChart extends View {
         canvas.drawText("0", OFFSET_LEFT - TEXT_OFFSET - 5, CHARTH - 100, paint);
         //画右侧数字
 
-        canvas.drawText(3.0 + "", CHARTW-OFFSET_LEFT+5, OFFSET_TOP + 10, paint);
+        canvas.drawText(3.0 + "", CHARTW - OFFSET_LEFT + 5, OFFSET_TOP + 10, paint);
         for (int i = 1; i < 10; i++) {
 
-            canvas.drawText(String.valueOf((float) Math.round(0.3 * i * 10) / 10), CHARTW-OFFSET_LEFT+5, CHARTH - 100 - (CHARTH - OFFSET_TOP - 100) / 10 * (i), paint);
+            canvas.drawText(String.valueOf((float) Math.round(0.3 * i * 10) / 10), CHARTW - OFFSET_LEFT + 5, CHARTH - 100 - (CHARTH - OFFSET_TOP - 100) / 10 * (i), paint);
         }
-        canvas.drawText("0", CHARTW-OFFSET_LEFT+5, CHARTH - 100, paint);
+        canvas.drawText("0", CHARTW - OFFSET_LEFT + 5, CHARTH - 100, paint);
 
 
         //画表格中的虚线
@@ -156,10 +152,9 @@ public class DrawChart extends View {
         if (plist.size() >= 2) {
             for (int i = 0; i < plist.size() - 1; i++) {
                 canvas.drawLine(plist.get(i).x, plist.get(i).y, plist.get(i + 1).x, plist.get(i + 1).y, paint);
-                invalidate();
+               // invalidate();
             }
         }
-
     }
 
     private void drawOtherCurve(Canvas canvas) {
@@ -173,7 +168,7 @@ public class DrawChart extends View {
         if (plist2.size() >= 2) {
             for (int i = 0; i < plist2.size() - 1; i++) {
                 canvas.drawLine(plist2.get(i).x, plist2.get(i).y, plist2.get(i + 1).x, plist2.get(i + 1).y, paint);
-                invalidate();
+             //   invalidate();
             }
 
         }

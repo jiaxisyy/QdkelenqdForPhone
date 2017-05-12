@@ -5,10 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.widget.DrawerLayout;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -22,9 +21,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shuangxiang.qdkelenqdforphone.bean.DeviceInfo;
 import com.example.shuangxiang.qdkelenqdforphone.utils.CacheUtils;
+import com.example.shuangxiang.qdkelenqdforphone.utils.CustomToast;
 import com.example.shuangxiang.qdkelenqdforphone.view.AnimotionSGView;
 import com.example.shuangxiang.qdkelenqdforphone.view.KeyboardLayout;
 import com.google.gson.Gson;
@@ -51,7 +52,7 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
     private static final String TAG = "MainActivity";
-    private static String URL = "http://kawakp.chinclouds.com:58010/userconsle/devices/deviceId0026/elementTables/xjf_t_1/datas?pageNum=1&pageSize=1";
+
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     @BindView(R.id.sg_animation)
     AnimotionSGView sgAnimation;
@@ -117,19 +118,29 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
     private AnimationDrawable animationDrawable;
     private Subscription subscription;
     private boolean et_flag = true;
+    private String URL;
+    private int mId;
+    private boolean mFlag_cb = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
         sgAnimation.start();
         sgAnimation.setIsArrive(this);
+
+        mId = CacheUtils.getInt(this, "id");
+        URL = "http://58.250.204.112:58010/userconsle/devices/deviceId00" + mId +
+                "/elementTables/xjf_t_1/datas?pageNum=1&pageSize=1";
+        Log.d(TAG, URL);
+
         initData();
         writeData();
         readData();
         rwCheckBox();
-        test();
+        // test();
 
     }
 
@@ -143,10 +154,8 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                 RelativeLayout wv_discover_law_error = (RelativeLayout) MainActivity.this.getWindow()
                         .getDecorView().findViewById
                                 (R.id.rl_test);
-
                 int measuredHeight = wv_discover_law_error.getMeasuredHeight();
                 int measuredWidth = wv_discover_law_error.getMeasuredWidth();
-
                 Log.d("test", measuredHeight + "键盘弹出" + measuredWidth);
             }
         });
@@ -246,6 +255,7 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     et_flag = false;
                     return false;
+
                 }
                 return false;
             }
@@ -514,16 +524,12 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
         cbSetting1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 et_flag = false;
                 if (cbSetting1.isChecked()) {
                     openOrClose(true, ids[0]);
                 } else {
                     openOrClose(false, ids[0]);
                 }
-//                    SystemClock.sleep(500);
-                et_flag = true;
-                readData();
             }
         });
         cbSetting2.setOnClickListener(new View.OnClickListener() {
@@ -535,9 +541,6 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                 } else {
                     openOrClose(false, ids[1]);
                 }
-//                SystemClock.sleep(500);
-                et_flag = true;
-                readData();
 
             }
         });
@@ -551,9 +554,6 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                     openOrClose(false, ids[2]);
                 }
 
-//                SystemClock.sleep(500);
-                et_flag = true;
-                readData();
 
             }
         });
@@ -567,9 +567,6 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                     openOrClose(false, ids[3]);
                 }
 
-//                SystemClock.sleep(500);
-                et_flag = true;
-                readData();
 
             }
         });
@@ -583,9 +580,6 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                     openOrClose(false, ids[4]);
                 }
 
-//                SystemClock.sleep(500);
-                et_flag = true;
-                readData();
 
             }
         });
@@ -599,9 +593,6 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                     openOrClose(false, ids[5]);
                 }
 
-//                SystemClock.sleep(500);
-                et_flag = true;
-                readData();
 
             }
         });
@@ -615,9 +606,6 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                     openOrClose(false, ids[6]);
                 }
 
-//                SystemClock.sleep(500);
-                et_flag = true;
-                readData();
 
             }
         });
@@ -631,9 +619,6 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                     openOrClose(false, ids[7]);
                 }
 
-//                SystemClock.sleep(500);
-                et_flag = true;
-                readData();
 
             }
         });
@@ -646,9 +631,7 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                 } else {
                     openOrClose(false, ids[8]);
                 }
-//                SystemClock.sleep(500);
-                et_flag = true;
-                readData();
+
 
             }
         });
@@ -661,10 +644,6 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                 } else {
                     openOrClose(false, ids[9]);
                 }
-//                SystemClock.sleep(500);
-                et_flag = true;
-                readData();
-
             }
         });
 
@@ -680,7 +659,8 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
 
 
         final String json = "{\"value\":" + value + "}";
-        final String switch_url = "http://kawakp.chinclouds.com:58010/userconsle/devices/deviceId0026/elements/" + elementId;
+        final String switch_url = "http://58.250.204.112:58010/userconsle/devices/deviceId00" + mId
+                + "/elements/" + elementId;
         final String cookie = CacheUtils.getString(this, "cookie");
         if (!TextUtils.isEmpty(cookie)) {
             Observable.create(new Observable.OnSubscribe<String>() {
@@ -735,7 +715,8 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
 
         int i = b ? 1 : 0;
         final String json = "{\"value\":" + i + "}";
-        final String switch_url = "http://kawakp.chinclouds.com:58010/userconsle/devices/deviceId0026/elements/" + elementId;
+        final String switch_url = "http://58.250.204" +
+                ".112:58010/userconsle/devices/deviceId00" + mId + "/elements/" + elementId;
         final String cookie = CacheUtils.getString(this, "cookie");
         if (!TextUtils.isEmpty(cookie)) {
             Observable.create(new Observable.OnSubscribe<String>() {
@@ -773,12 +754,23 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
 
                 @Override
                 public void onNext(String s) {
-                    Log.d(TAG, s);
+
+                    if (s.contains("success")) {
+                        et_flag = true;
+                        SystemClock.sleep(1000);
+                        readData();
+                    } else {
+                        CustomToast.showToast(MainActivity.this, "操作失败", Toast.LENGTH_SHORT);
+                    }
+
+
                 }
             });
 
         }
+
     }
+
 
     /**
      * 读取数据
@@ -875,6 +867,8 @@ public class MainActivity extends Activity implements AnimotionSGView.IsArrive {
                     checkBoxes.add(cbSetting10);
 
                     int length = intsD.length;
+
+
                     for (int i = 0; i < length; i++) {
                         if (intsD[i] == 1) {
                             //给开关赋值

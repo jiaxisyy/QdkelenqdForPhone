@@ -32,8 +32,9 @@ import rx.schedulers.Schedulers;
  * Created by shuang.xiang on 2016/8/18.
  */
 public class ShowActivity extends AppCompatActivity {
+
     private static final String TAG = "ShowActivity";
-    private static String URL = "http://kawakp.chinclouds.com:58010/userconsle/devices/deviceId0026/elementTables/xjf_t_1/datas?pageNum=1&pageSize=1";
+
     @BindView(R.id.tb_show)
     Toolbar tbShow;
     @BindView(R.id.dc_show)
@@ -44,14 +45,51 @@ public class ShowActivity extends AppCompatActivity {
     TextView tvShowP;
     private OkHttpClient okHttpClient = new OkHttpClient();
     private boolean flag = true;
+    private String mURL;
+    private int mId;
+//    private Handler mHandler = new Handler(new Handler.Callback() {
+//        @Override
+//        public boolean handleMessage(Message msg) {
+//            int obj = (int) msg.obj;
+//            dcShow.setY(obj);
+//            dcShow.invalidate();
+//            return false;
+//        }
+//    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show);
         ButterKnife.bind(this);
+//        getWindow().setBackgroundDrawable(null);
+        mId = CacheUtils.getInt(this, "id");
+        mURL = "http://58.250.204" +
+                ".112:58010/userconsle/devices/deviceId00" + mId + "/elementTables/xjf_t_1/datas" +
+                "?pageNum=1&pageSize=1";
         setSupportActionBar(tbShow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    while (true) {
+//                        int i = new Random().nextInt(100);
+//                        Thread.sleep(2000);
+//                        Message message = Message.obtain();
+//                        message.obj=i;
+//                        mHandler.sendMessage(message);
+//                    }
+//
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        }).start();
+
         readData();
     }
 
@@ -66,7 +104,8 @@ public class ShowActivity extends AppCompatActivity {
                 @Override
                 public void call(final Subscriber<? super String> subscriber) {
                     while (flag) {
-                        Request request = new Request.Builder().addHeader("cookie", cookie).url(URL).get().build();
+                        Request request = new Request.Builder().addHeader("cookie", cookie).url
+                                (mURL).get().build();
                         okHttpClient.newCall(request).enqueue(new Callback() {
                             @Override
                             public void onFailure(Request request, IOException e) {
@@ -81,7 +120,7 @@ public class ShowActivity extends AppCompatActivity {
                             }
                         });
                         try {
-                            Thread.sleep(3000);
+                            Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -120,6 +159,7 @@ public class ShowActivity extends AppCompatActivity {
                     String s2 = String.valueOf(v);
                     String substring = s2.substring(0, s2.indexOf("."));
                     dcShow.setOtherY(Integer.parseInt(substring));
+                    dcShow.invalidate();
                 }
             });
 
@@ -129,10 +169,9 @@ public class ShowActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-
-            startActivity(new Intent(this, MainActivity.class));
             flag = false;
             finish();
+            startActivity(new Intent(this, MainActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

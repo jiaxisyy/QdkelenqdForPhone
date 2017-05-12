@@ -37,11 +37,9 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Handler;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,11 +54,12 @@ import rx.schedulers.Schedulers;
  * Created by shuang.xiang on 2016/8/18.
  */
 public class AlarmActivity extends AppCompatActivity {
-    private static final String ALARM_URL = "http://kawakp.chinclouds.com:58010/userconsle/deviceAlarms?pageSize=20";
+    private static final String ALARM_URL = "http://58.250.204" +
+            ".112:58010/userconsle/deviceAlarms?pageSize=20";
     private static final String TAG = "AlarmActivity";
     @BindView(R.id.alarm_swipeRefresh)
     SwipeRefreshLayout alarmSwipeRefresh;
-    private String deviceId = "deviceId0026";
+    private String deviceId = "deviceId0028";
     private int pageNum;
     private int pageSize;
     private String startTime = "";
@@ -129,7 +128,8 @@ public class AlarmActivity extends AppCompatActivity {
                     Log.d(TAG, " 上拉加载");
                     i += 1;
                     Log.d(TAG, "i=" + i);
-                    final String url = "http://kawakp.chinclouds.com:58010/userconsle/deviceAlarms?pageNum=" + i + "&pageSize=20";
+                    final String url = "http://58.250.204" +
+                            ".112:58010/userconsle/deviceAlarms?pageNum=" + i + "&pageSize=20";
                     final String cookie = CacheUtils.getString(AlarmActivity.this, "cookie");
                     if (!TextUtils.isEmpty(cookie)) {
                         Observable.create(new Observable.OnSubscribe<String>() {
@@ -169,7 +169,8 @@ public class AlarmActivity extends AppCompatActivity {
                             public void onNext(String s) {
                                 Gson gson = new Gson();
                                 AlarmInfo alarmInfo = gson.fromJson(s, AlarmInfo.class);
-                                list = alarmInfo.getList();
+                                List newList = alarmInfo.getList();
+                                list.addAll(newList);
                                 adapter.setData(list);
                             }
                         });
@@ -288,7 +289,8 @@ public class AlarmActivity extends AppCompatActivity {
     private void search() {
         pageNum = 1;
         pageSize = 20;
-        final String SEARCH_URL = "http://kawakp.chinclouds.com:58010/userconsle/deviceAlarms/" + deviceId + "/elementTables/xjf_t_1/datas?" + "&pageNum=" + pageNum + "&pageSize=" + pageSize + "&&fromDate=" + startTime + "&toDate=" + endTime;
+        final String SEARCH_URL = "http://58.250.204.112:58010/userconsle/deviceAlarms/" +
+                deviceId + "/elementTables/xjf_t_1/datas?" + "&pageNum=" + pageNum + "&pageSize=" + pageSize + "&&fromDate=" + startTime + "&toDate=" + endTime;
         Log.d(TAG, SEARCH_URL);
         final String cookie = CacheUtils.getString(this, "cookie");
         if (!TextUtils.isEmpty(cookie)) {
@@ -331,6 +333,7 @@ public class AlarmActivity extends AppCompatActivity {
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(AlarmActivity.this, LinearLayoutManager.VERTICAL, false);
                     rvAlarm.setLayoutManager(linearLayoutManager);
                     rvAlarm.setAdapter(new MyAlarmRecyclerViewAdapter(list, AlarmActivity.this));
+
                 }
             });
         }
@@ -392,7 +395,6 @@ public class AlarmActivity extends AppCompatActivity {
         mins.setAdapter(new NumericWheelAdapter(0, 59));
         //mins.setLabel("分");
         mins.setCyclic(true);
-
         hour.setCurrentItem(8);
         mins.setCurrentItem(30);
 

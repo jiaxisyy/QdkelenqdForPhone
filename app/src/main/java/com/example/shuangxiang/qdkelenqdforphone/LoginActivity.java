@@ -7,16 +7,12 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Message;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.shuangxiang.qdkelenqdforphone.bean.LoginErrorInfo;
 import com.example.shuangxiang.qdkelenqdforphone.utils.CacheUtils;
-import com.example.shuangxiang.qdkelenqdforphone.utils.CustomToast;
 import com.google.gson.Gson;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -40,7 +36,7 @@ import rx.schedulers.Schedulers;
  */
 public class LoginActivity extends Activity {
     private static final String TAG = "LoginActivity";
-    private String LOGINURL = "http://kawakp.chinclouds.com:58010/userconsle/login";
+    private String LOGINURL = "http://58.250.204.112:58010/userconsle/login";
     @BindView(R.id.editText_username)
     EditText editTextUsername;
     @BindView(R.id.editText_password)
@@ -102,7 +98,7 @@ public class LoginActivity extends Activity {
                 if (!isError) {
                     progressDialog.dismiss();
                     finish();
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    startActivity(new Intent(LoginActivity.this, ChooseIdActivity.class));
                 } else {
                     //失败,显示失败信息
                     Gson gson = new Gson();
